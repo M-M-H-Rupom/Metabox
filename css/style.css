@@ -1,0 +1,10 @@
+.info_name_label{
+    font-size: 22px;
+    color: #e74c3c;
+}
+.info_name_input input{
+    width: 100%;
+    padding: 8px;
+    font-size: 18px;
+    border: 1px solid #feca57;
+}

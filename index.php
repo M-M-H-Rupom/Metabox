@@ -11,6 +11,12 @@ class metabox{
     function __construct(){
         add_action('admin_menu',array($this,'omb_add_metabox'));
         add_action( 'save_post',array($this,'callback_save_post'));
+        add_action( 'admin_enqueue_scripts', array($this,'metabox_css'));
+    }
+    function metabox_css(){
+        wp_enqueue_style( 'admin_css', plugin_dir_url( __FILE__ ).'/css/style.css');
+        wp_enqueue_style( 'jquery_css','//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js');
+        wp_enqueue_script( 'admin_js', plugin_dir_url( __FILE__ ).'/js/main.js', array('jquery','jquery-ui-datepicker'),time(), true );
     }
     function is_secure($wp_nonce_action,$nonce_field_name,$post_id){
         $nonce = isset($_POST[$nonce_field_name]) ? $_POST[$nonce_field_name] : '';
@@ -52,10 +58,21 @@ class metabox{
         $genders = ['Male','Female','Others'];
         $cities = ['rangpur','dhaka','cumilla'];
         $data = <<<EOD
-            <label for="">Name</label>
-            <input type="text" name="mb_name" id="mb_name" value="{$name}">
-            <label for="">Home</label>
-            <input type="text" name="mb_home" id="mb_home" value="{$home}">
+            <div class="info_name_label">
+                <label for="">Name</label>
+            </div>
+            <div class="info_name_input">
+                <input type="text" name="mb_name" id="mb_name" value="{$name}">
+            </div>
+            <div class="info_name_label">
+                <label for="">Home</label>
+            </div>
+            <div class="info_name_input">
+                <input type="text" name="mb_home" id="mb_home" value="{$home}">
+            </div>
+            <div class="info_name_input">
+                <input type="text" class="mb_date_piker" id="mb_date_piker">
+            </div>
         EOD;
         foreach($colors as $color){
             $checked = '';
