@@ -73,6 +73,11 @@ class metabox{
             <div class="info_name_input">
                 <input type="text" class="mb_date_piker" id="mb_date_piker">
             </div>
+            <label for="">Image</label>
+            <div class="upload_image_part">
+              <button id="image_upload"> Upload image </button> <br>
+            </div>
+
         EOD;
         foreach($colors as $color){
             $checked = '';
