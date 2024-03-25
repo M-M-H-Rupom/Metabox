@@ -34,6 +34,8 @@ class metabox{
         $fav_color = isset($_POST['fav_color']) ? $_POST['fav_color'] : array();
         $gender = isset($_POST['mb_gender']) ? $_POST['mb_gender'] : '';
         $country = isset($_POST['mb_citys']) ? $_POST['mb_citys'] : '';
+        $image_id =isset($_POST['mb_image_id']) ? $_POST['mb_image_id'] : '';
+        $image_url =isset($_POST['mb_image_url']) ? $_POST['mb_image_url'] : '';
         if($name == '' || $home == ''){
             return $post_id; 
         }
@@ -42,18 +44,21 @@ class metabox{
         update_post_meta($post_id, 'fav_color', $fav_color);
         update_post_meta($post_id, 'mb_gender', $gender);
         update_post_meta($post_id, 'mb_citys', $country);
+        update_post_meta($post_id, 'mb_image_id', $image_id);
+        update_post_meta($post_id, 'mb_image_url', $image_url);
     }
     function omb_add_metabox(){
         add_meta_box('new_mata', 'Information',array($this,'callback_for_metabox'),'page');
     }
     function callback_for_metabox($post){
         wp_nonce_field('wp_nonce_action','nonce_field_name');
+        $img_id = get_post_meta($post->ID, 'mb_image_id', true);
+        $img_url = get_post_meta($post->ID, 'mb_image_url', true);
         $name = get_post_meta($post->ID,'mb_name',true);
         $home = get_post_meta($post->ID,'mb_home',true);
         $fav_color = get_post_meta($post->ID,'fav_color',true);
         $p_gender = get_post_meta($post->ID,'mb_gender',true);
         $citys = get_post_meta($post->ID,'mb_citys',true);
-        print_r($country);
         $colors = ['green','red','black','pink','yellow'];
         $genders = ['Male','Female','Others'];
         $cities = ['rangpur','dhaka','cumilla'];
@@ -76,6 +81,10 @@ class metabox{
             <label for="">Image</label>
             <div class="upload_image_part">
               <button id="image_upload"> Upload image </button> <br>
+              <input type="hidden" name="mb_image_id" id="mb_image_id" value="{$img_id}">
+              <input type="hidden" name="mb_image_url" id="mb_image_url" value="{$img_url}">
+              <div id="mb_image_container">
+              </div>
             </div>
 
         EOD;
