@@ -10,8 +10,14 @@
 class metabox{
     function __construct(){
         add_action('admin_menu',array($this,'omb_add_metabox'));
-        add_action( 'save_post',array($this,'callback_save_post'));
-        add_action( 'admin_enqueue_scripts', array($this,'metabox_css'));
+        add_action('save_post',array($this,'callback_save_post'));
+        add_action('admin_enqueue_scripts', array($this,'metabox_css'));
+        add_filter('user_contactmethods',array($this,'info_contact_method'));
+    }
+    function info_contact_method($methods){
+        $methods['facebook'] = 'facebook';
+        $methods['linkedin'] = 'linkedin';
+        return $methods;
     }
     function metabox_css(){
         wp_enqueue_style( 'admin_css', plugin_dir_url( __FILE__ ).'/css/style.css');
@@ -36,6 +42,7 @@ class metabox{
         $country = isset($_POST['mb_citys']) ? $_POST['mb_citys'] : '';
         $image_id =isset($_POST['mb_image_id']) ? $_POST['mb_image_id'] : '';
         $image_url =isset($_POST['mb_image_url']) ? $_POST['mb_image_url'] : '';
+        $post_page = $_POST['mb_post_page'];
         if($name == '' || $home == ''){
             return $post_id; 
         }
@@ -46,6 +53,7 @@ class metabox{
         update_post_meta($post_id, 'mb_citys', $country);
         update_post_meta($post_id, 'mb_image_id', $image_id);
         update_post_meta($post_id, 'mb_image_url', $image_url);
+        update_post_meta($post_id, 'mb_post_page', $post_page);
     }
     function omb_add_metabox(){
         add_meta_box('new_mata', 'Information',array($this,'callback_for_metabox'),'page');
@@ -59,6 +67,8 @@ class metabox{
         $fav_color = get_post_meta($post->ID,'fav_color',true);
         $p_gender = get_post_meta($post->ID,'mb_gender',true);
         $citys = get_post_meta($post->ID,'mb_citys',true);
+        $post_pages = get_post_meta($post->ID,'mb_post_page', true);
+        print_r($post_pages);
         $colors = ['green','red','black','pink','yellow'];
         $genders = ['Male','Female','Others'];
         $cities = ['rangpur','dhaka','cumilla'];
@@ -88,6 +98,7 @@ class metabox{
             </div>
 
         EOD;
+       
         foreach($colors as $color){
             $checked = '';
             if(in_array($color,$fav_color)){
@@ -119,9 +130,32 @@ class metabox{
         EOD;
         }
         $data .="</select>";
+        $args = array(
+            'post_type' => 'page',
+            'post_per_page' => -1,
+        );
+        $dropdown_list = '';
+        $a_posts = new WP_Query($args);
+        while($a_posts->have_posts()){
+            $selected = '';
+            $a_posts->the_post();
+            if(get_the_ID() == $post_pages){
+                $selected = 'selected';
+            }
+            
+            $dropdown_list .= sprintf("<option value='%s' %s>%s</option>",get_the_ID(),$selected,get_the_title());
+        }
+        wp_reset_query();
+        $data .= <<<EOD
+            <select name="mb_post_page" id="mb_post_page">
+                <option> Select </option>
+                {$dropdown_list}
+            </select>
+        EOD;
         
         echo $data;
     }
 }
 new metabox();
+
 ?>
